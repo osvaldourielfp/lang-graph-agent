@@ -1,0 +1,9 @@
+services:
+  langgraph-agent:
+    build: .
+    env_file:
+      - .env
+    volumes:
+      # Mount app for development (optional)
+      - ./app:/app/app
+    command: python app/main.py
