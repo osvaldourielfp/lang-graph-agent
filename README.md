@@ -1,0 +1,76 @@
+# LangGraph Agent Project
+
+A basic AI agent project built with LangGraph, designed as a learning resource for understanding LangGraph agents. This project demonstrates how to create a simple agent that can use tools, such as a weather query tool, while running entirely in Docker containers to avoid local dependency installations.
+
+## Features
+
+- **Simple Agent**: An AI agent that responds to user queries using LangGraph's `create_agent`.
+- **Tool Integration**: Includes a basic weather tool as an example of tool usage.
+- **Containerized**: Fully containerized with Docker and Docker Compose for easy setup.
+- **OpenAI Integration**: Uses GPT-4o-mini for language model capabilities.
+
+## Prerequisites
+
+- Docker (version 20.10 or later)
+- Docker Compose (version 2.0 or later)
+- OpenAI API key (sign up at [OpenAI](https://platform.openai.com/) if you don't have one)
+
+## Installation and Setup
+
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/osvaldourielfp/lang-graph-agent.git
+   cd lang-graph-agent
+   ```
+
+2. **Create a `.env` file**:
+   In the root directory, create a `.env` file and add your OpenAI API key:
+   ```
+   OPENAI_API_KEY=your_openai_api_key_here
+   ```
+
+3. **Build and run with Docker Compose**:
+   ```bash
+   docker-compose up --build
+   ```
+
+   This will build the Docker image and start the container. The agent will run and execute a sample query, printing the result to the console.
+
+## Usage
+
+Once the container is running, the agent will automatically execute the example query: "what is the weather in sf".
+
+To modify the query or extend the agent:
+- Edit `app/main.py` to change the input message or add more tools.
+- Rebuild the container: `docker-compose up --build`
+
+For development:
+- The `docker-compose.yml` includes volume mounting for `app/`, so you can edit code locally and restart the container.
+
+## Project Structure
+
+```
+lang-graph-agent/
+├── app/
+│   └── main.py          # Main agent code
+├── requirements.txt     # Python dependencies
+├── Dockerfile           # Docker image definition
+├── docker-compose.yml   # Docker Compose configuration
+├── .env                 # Environment variables (not committed)
+├── .gitignore           # Git ignore rules
+└── README.md            # This file
+```
+
+## Learning Resources
+
+This project is intended for learning LangGraph:
+- [LangGraph Documentation](https://langchain-ai.github.io/langgraph/)
+- [LangChain Agents Guide](https://python.langchain.com/docs/modules/agents/)
+
+## Contributing
+
+Feel free to fork and submit pull requests. This is a learning project, so contributions that add examples or improve the agent are welcome!
+
+## License
+
+This project is open-source and available under the [MIT License](LICENSE).
