@@ -9,5 +9,6 @@ venv/
 .env
 .env.local
 .DS_Store
+*.egg-info
 
 .langgraph_api
