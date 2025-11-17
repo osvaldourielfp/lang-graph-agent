@@ -1,18 +1,18 @@
 # LangGraph Agent Project
 
-A basic AI agent project built with LangGraph, designed as a learning resource for understanding LangGraph agents. This project demonstrates how to create a simple agent that can use tools, such as a weather query tool, while running entirely in Docker containers to avoid local dependency installations.
+A basic AI agent project built with LangGraph, designed as a learning resource for understanding LangGraph agents. This project demonstrates how to create a simple agent that can use tools, such as a weather query tool, using uv for fast Python dependency management.
 
 ## Features
 
 - **Simple Agent**: An AI agent that responds to user queries using LangGraph's `create_agent`.
 - **Tool Integration**: Includes a basic weather tool as an example of tool usage.
-- **Containerized**: Fully containerized with Docker and Docker Compose for easy setup.
+- **Fast Dependency Management**: Uses uv for quick and reliable Python package installation.
 - **OpenAI Integration**: Uses GPT-4o-mini for language model capabilities.
 
 ## Prerequisites
 
-- Docker (version 20.10 or later)
-- Docker Compose (version 2.0 or later)
+- Python (version 3.12 or later)
+- uv (for dependency management)
 - OpenAI API key (sign up at [OpenAI](https://platform.openai.com/) if you don't have one)
 
 ## Installation and Setup
@@ -23,42 +23,69 @@ A basic AI agent project built with LangGraph, designed as a learning resource f
    cd lang-graph-agent
    ```
 
-2. **Create a `.env` file**:
+2. **Install uv**:
+   ```bash
+   curl -LsSf https://astral.sh/uv/install.sh | sh
+   ```
+
+3. **Create a `.env` file**:
    In the root directory, create a `.env` file and add your OpenAI API key:
    ```
    OPENAI_API_KEY=your_openai_api_key_here
    ```
 
-3. **Build and run with Docker Compose**:
+4. **Install dependencies**:
    ```bash
-   docker-compose up --build
+   uv sync
    ```
 
-   This will build the Docker image and start the container. The agent will run and execute a sample query, printing the result to the console.
+5. **Run the agent**:
+   ```bash
+   uv run langgraph dev
+   ```
+
+   This will start the LangGraph development server. The agent will be available at the provided URL.
 
 ## Usage
 
-Once the container is running, the agent will automatically execute the example query: "what is the weather in sf".
+Once the development server is running, you can interact with the agent through the LangGraph Studio interface at the provided URL.
 
 To modify the query or extend the agent:
-- Edit `app/main.py` to change the input message or add more tools.
-- Rebuild the container: `docker-compose up --build`
+- Edit files in `src/agents/` to change the agent logic or add more tools.
+- The server will automatically reload changes.
 
 For development:
-- The `docker-compose.yml` includes volume mounting for `app/`, so you can edit code locally and restart the container.
+- Use `uv run` to execute commands within the virtual environment, e.g., `uv run python -m src.agents.main`.
+
+## Packages Added
+
+The project uses the following main dependencies (defined in `pyproject.toml`):
+- `langchain>=1.0.7`: Core LangChain library.
+- `langchain-core>=1.0.5`: Core components for LangChain.
+- `langchain-google-genai>=3.0.3`: Integration with Google Generative AI.
+- `langchain-google-vertexai>=3.0.3`: Integration with Google Vertex AI.
+- `langchain-openai>=1.0.3`: Integration with OpenAI.
+- `langgraph>=1.0.3`: LangGraph framework.
+
+Development dependencies:
+- `grandalf>=0.8`: Graph visualization.
+- `ipykernel>=7.1.0`: Jupyter kernel.
+- `langgraph-cli[inmem]>=0.4.7`: LangGraph CLI with in-memory store.
 
 ## Project Structure
 
 ```
 lang-graph-agent/
-├── app/
-│   └── main.py          # Main agent code
-├── requirements.txt     # Python dependencies
-├── Dockerfile           # Docker image definition
-├── docker-compose.yml   # Docker Compose configuration
-├── .env                 # Environment variables (not committed)
-├── .gitignore           # Git ignore rules
-└── README.md            # This file
+├── src/
+│   ├── agents/         # Agent definitions
+│   └── api/            # API endpoints
+├── notebook/           # Jupyter notebooks
+├── pyproject.toml      # Project configuration and dependencies
+├── uv.lock             # Locked dependency versions
+├── langgraph.json      # LangGraph CLI configuration
+├── .env                # Environment variables (not committed)
+├── .gitignore          # Git ignore rules
+└── README.md           # This file
 ```
 
 ## Learning Resources
