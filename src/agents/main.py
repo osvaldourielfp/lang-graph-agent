@@ -10,8 +10,8 @@ agent = create_agent(
     system_prompt="You are a helpful assistant",
 )
 
-# Run the agent
-result = agent.invoke(
-    {"messages": [{"role": "user", "content": "what is the weather in sf"}]}
-)
-print(result["messages"][-1].content)
+# # Run the agent
+# result = agent.invoke(
+#     {"messages": [{"role": "user", "content": "what is the weather in sf"}]}
+# )
+# print(result["messages"][-1].content)

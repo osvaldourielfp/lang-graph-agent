@@ -9,3 +9,5 @@ venv/
 .env
 .env.local
 .DS_Store
+
+.langgraph_api
