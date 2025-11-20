@@ -3,7 +3,7 @@ from langgraph.graph import MessagesState
 from langchain_core.messages import AIMessage
 from langchain.chat_models import init_chat_model
 
-llm = init_chat_model(model="openai:gpt-4o", temperature=1)
+llm = init_chat_model(model="openai:gpt-4o-mini", temperature=1)
 file_search_tool = {
     "type": "file_search",
     "vector_store_ids": ["vs_691b86cb24788191ad17cfdc400f3e4a"],
@@ -12,29 +12,50 @@ llm = llm.bind_tools([file_search_tool])
 
 class State(MessagesState):
     customer_name: str
-    my_age: int
+    phone: str
+    my_age: str
 
-def node_1(state: State):
+from pydantic import BaseModel, Field
+
+class ContactInfo(BaseModel):
+    """Contact information for a person"""
+    name: str = Field(description="The name of the person")
+    email: str = Field(description="The email address of the person")
+    phone: str = Field(description="The phone number of the person")
+    age: str = Field(description="The age of the person")
+
+llm_with_structured_output = llm.with_structured_output(schema=ContactInfo)
+
+def extractor(state: State):
+    history = state["messages"]
+    customer_name = state.get("customer_name", None)
     new_state: State = {}
-    if state.get("customer_name", None) is None:
-        new_state["customer_name"] = "John Doe"
-    else:
-        new_state["my_age"] = random.randint(18, 65)
-    
+    if customer_name is None or len(history) >= 10:
+        schema = llm_with_structured_output.invoke(history)
+        new_state["customer_name"] = schema.name
+        new_state["phone"] = schema.phone
+        new_state["my_age"] = schema.age
+    return new_state
+
+def conversation(state: State):
+    new_state: State = {}
     history = state.get("messages", [])
     last_message = history[-1]
-    ai_message = llm.invoke(last_message.text)
+    customer_name = state.get("customer_name", "John Doe")
+    system_message = f"You are a helpful assistant that can answer questions about the customer {customer_name}"
+    ai_message = llm.invoke([("system", system_message), ("user", last_message.text)])
     new_state["messages"] = [ai_message]
-    print(new_state)
     return new_state
 
 from langgraph.graph import END, StateGraph, START
 
 builder = StateGraph(State)
-builder.add_node("node_1", node_1)
+builder.add_node("conversation", conversation)
+builder.add_node("extractor", extractor)
 
-builder.add_edge(START, "node_1")
-builder.add_edge("node_1", END)
+builder.add_edge(START, "extractor")
+builder.add_edge("extractor", "conversation")
+builder.add_edge("conversation", END)
 
 agent = builder.compile()
 
